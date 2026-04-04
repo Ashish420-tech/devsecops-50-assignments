@@ -84,6 +84,10 @@ These tools and practices are widely used in enterprise environments to:
 * Protect against supply chain attacks
 
 ---
+## 🏗️ DevSecOps Architecture
+
+See full architecture:
+[View Diagram](docs/devsecops-architecture.md)
 
 ## 👨‍💻 Author
 
