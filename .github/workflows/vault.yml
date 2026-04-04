@@ -22,9 +22,24 @@ jobs:
           unzip vault_1.15.0_linux_amd64.zip
           sudo mv vault /usr/local/bin/
 
-      - name: Fetch Secrets from Vault
-        env:
-          VAULT_ADDR: http://host.docker.internal:8200
-          VAULT_TOKEN: root
+      - name: Start Vault Dev Server
+        run: |
+          vault server -dev -dev-root-token-id=root &
+          sleep 5
+
+      - name: Set Vault Environment
+        run: |
+          echo "VAULT_ADDR=http://127.0.0.1:8200" >> $GITHUB_ENV
+          echo "VAULT_TOKEN=root" >> $GITHUB_ENV
+
+      - name: Store Secret in Vault
+        run: |
+          vault kv put secret/database \
+            db_username=root \
+            db_password=password123 \
+            db_name=devsecops_db \
+            db_host=localhost
+
+      - name: Fetch Secret from Vault
         run: |
           vault kv get secret/database
