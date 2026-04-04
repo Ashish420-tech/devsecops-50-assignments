@@ -115,6 +115,9 @@ Modern DevSecOps pipelines:
 * Automate security at every stage
 
 ---
+## 🏗️ DevSecOps Architecture
+
+![DevSecOps Architecture](docs/devsecops-diagram.png)
 
 ## ✅ Conclusion
 
