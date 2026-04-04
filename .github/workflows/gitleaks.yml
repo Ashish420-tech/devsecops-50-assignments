@@ -1,0 +1,19 @@
+name: Gitleaks Scan
+const token = "ghp_abcdefghijklmnopqrstuvwxyz123456";
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Gitleaks (Fail on Leak)
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: detect --source=. --verbose --exit-code 1
