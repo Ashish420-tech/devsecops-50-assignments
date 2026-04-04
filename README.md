@@ -92,7 +92,8 @@ These tools and practices are widely used in enterprise environments to:
 
 ## 🏗️ DevSecOps Architecture
 
-See full architecture: View Diagram
+See full architecture: [View Diagram](https://github.com/Ashish420-tech/devsecops-50-assignments/blob/main/docs/devsecops-architecture.md)
+
 
 ---
 
