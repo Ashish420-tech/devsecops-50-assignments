@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # ✅ IMPORTANT FIX
 
       - name: Run Gitleaks (Fail on Leak)
         uses: zricethezav/gitleaks-action@v2
