@@ -1,1 +1,23 @@
-[]
+[
+ {
+  "RuleID": "generic-api-key",
+  "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+  "StartLine": 7,
+  "EndLine": 7,
+  "StartColumn": 7,
+  "EndColumn": 40,
+  "Match": "AWS_SECRET = \"AKIA123456789SECRET\"",
+  "Secret": "AKIA123456789SECRET",
+  "File": "app/demo-app/app.js",
+  "SymlinkFile": "",
+  "Commit": "cfab6a647dccfa31293495e18dafb2e57a7a6514",
+  "Link": "https://github.com/Ashish420-tech/devsecops-50-assignments/blob/cfab6a647dccfa31293495e18dafb2e57a7a6514/app/demo-app/app.js#L7",
+  "Entropy": 4.037401,
+  "Author": "Ashish Mondal",
+  "Email": "mimokool2011@gmail.com",
+  "Date": "2026-04-04T03:04:53Z",
+  "Message": "added secret for scanning test",
+  "Tags": [],
+  "Fingerprint": "cfab6a647dccfa31293495e18dafb2e57a7a6514:app/demo-app/app.js:generic-api-key:7"
+ }
+]
