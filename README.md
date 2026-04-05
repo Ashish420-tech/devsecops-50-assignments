@@ -32,44 +32,78 @@ This repository is a **complete, hands-on DevSecOps lab** — 50 real-world assi
 
 | Domain | Assignments | Key Tools |
 |---|---|---|
+
 | 🔑 Secrets Management | 5 | Gitleaks · HashiCorp Vault · External Secrets Operator · AWS Secrets Manager |
+
 | 📦 Container Security | 6 | Trivy · Cosign · Syft (SBOM) · Distroless · Rootless Images |
+
 | 🏗️ IaC Security | 4 | Checkov · Kubesec · Terraform State Security · Remote Backends |
+
 | 🔍 SAST / Code Quality | 2 | SonarQube · CodeQL |
+
 | 🌐 DAST / API Testing | 3 | OWASP ZAP · Nuclei · kube-hunter |
+
 | 📜 Supply Chain Security | 3 | Syft · Cosign · Dependency-Track |
+
 | ☁️ Cloud Security | 5 | AWS GuardDuty · AWS SecurityHub · AWS WAF · EKS Hardening · S3 Audit |
+
 | 🕸️ Network Security | 3 | Kubernetes NetworkPolicy · Istio mTLS · Kubernetes Audit Logging |
+
 | 🚦 Runtime Security | 3 | Falco · Admission Controllers · Pod Security Standards |
+
 | 🔐 Access & Identity | 4 | Kubernetes RBAC · OPA/Gatekeeper · OIDC Federated Identity · IAM Least Privilege |
+
 | 📋 Compliance | 5 | CIS Benchmarks · kube-bench · SOC 2 · DORA Metrics · FOSSA |
+
 | 📡 Monitoring & SIEM | 3 | Prometheus · Grafana · Splunk · ELK Stack |
+
 | ⚙️ CI/CD Pipeline | 4 | GitHub Actions Security · Jenkins Hardening · Snyk · GitOps with ArgoCD |
+
 | 🏁 Capstone Project | 1 | End-to-End DevSecOps Pipeline |
+
 
 ---
 
 ## 📁 Repository Structure
 
 \`\`\`
+
 devsecops-50-assignments/
+
 │
+
 ├── 📂 assignment-01-gitleaks/              # Secrets Detection
+
 ├── 📂 assignment-02-trivy/                 # Container Vulnerability Scanning
+
 ├── 📂 assignment-03-checkov/               # IaC Security Scanning
+
 ├── 📂 assignment-04-sonarqube/             # SAST & Code Quality
+
 ├── 📂 assignment-05-vault/                 # Secrets Management
+
 ├── 📂 assignment-06-owasp-zap/             # Dynamic Application Testing
+
 ├── 📂 assignment-07-opa-gatekeeper/        # Kubernetes Policy Enforcement
+
 ├── 📂 assignment-08-network-policy/        # Kubernetes Network Security
+
 ├── 📂 assignment-09-github-actions/        # Secure CI/CD Workflows
+
 ├── 📂 assignment-10-kube-bench/            # CIS Benchmark Compliance
+
 ├── 📂 assignment-11-falco/                 # Runtime Threat Detection
+
 ├── 📂 assignment-12-sbom/                  # Software Bill of Materials
+
 ├── 📂 assignment-13-kubernetes-rbac/       # Identity & Access Management
+
 ├── 📂 assignment-14-external-secrets/      # External Secrets Operator + AWS SM
+
 │   ...
+
 ├── 📂 assignment-50-capstone/              # End-to-End DevSecOps Pipeline
+
 │
 └── 📂 .github/
     └── workflows/
@@ -84,28 +118,43 @@ devsecops-50-assignments/
 ## 🔧 The DevSecOps Toolchain
 
 \`\`\`
+
+
  ┌──────────────────────────────────────────────────────────────────────────────┐
- │                         CI/CD SECURITY PIPELINE                              │
+ │                         CI/CD SECURITY PIPELINE       
+ 
+ │
  ├─────────────┬────────────────┬────────────────┬─────────────┬───────────────┤
- │  Pre-Commit │     Build      │      Test      │   Artifacts │    Runtime    │
+ │  Pre-Commit │     Build      │      Test      │   Artifacts │    Runtime    
+ │
  ├─────────────┼────────────────┼────────────────┼─────────────┼───────────────┤
- │  Gitleaks   │  Trivy (image) │   OWASP ZAP    │   Cosign    │  Falco        │
- │  Husky      │  Checkov (IaC) │   Nuclei (API) │   Syft      │  Istio mTLS   │
+ │  Gitleaks   │  Trivy (image) │   OWASP ZAP    │   Cosign    │  Falco      
+ │
+ │  Husky      │  Checkov (IaC) │   Nuclei (API) │   Syft      │  Istio mTLS 
+ │
  │  pre-commit │  SonarQube     │   kube-hunter  │   Trivy     │  NetworkPolicy│
+ 
  │  hooks      │  Snyk (SCA)    │   Dependency   │   SBOM      │  GuardDuty    │
  └─────────────┴────────────────┴────────────────┴─────────────┴───────────────┘
                                     │
                    ┌────────────────▼─────────────────┐
                    │        DEPLOY & GOVERN            │
+                   
                    │  OPA Gatekeeper · Kyverno         │
+                   
                    │  ArgoCD · Vault · RBAC            │
+                   
                    └──────────────────────────────────┘
                                     │
                    ┌────────────────▼─────────────────┐
                    │      MONITOR & COMPLY             │
+                   
                    │  Prometheus · Grafana · Splunk    │
+                   
                    │  AWS SecurityHub · kube-bench     │
+                   
                    └──────────────────────────────────┘
+                   
 \`\`\`
 
 ---
