@@ -1,0 +1,37 @@
+name: OWASP ZAP DAST Scan
+
+on:
+push:
+branches:
+- assignment-06-owasp-zap-dast
+
+jobs:
+zap-scan:
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Code
+    uses: actions/checkout@v3
+
+  - name: Start Juice Shop
+    run: |
+      docker run -d -p 3000:3000 --name juice-shop bkimminich/juice-shop
+      sleep 30
+
+  - name: Run OWASP ZAP Baseline Scan
+    run: |
+      docker run --rm \
+        --network=container:juice-shop \
+        -v $(pwd)/assignment-06-owasp-zap-dast/reports:/zap/wrk \
+        ghcr.io/zaproxy/zaproxy:stable \
+        zap-baseline.py \
+        -t http://localhost:3000 \
+        -r zap-report.html
+
+  - name: Upload ZAP Report
+    uses: actions/upload-artifact@v4
+    with:
+      name: zap-report
+      path: assignment-06-owasp-zap-dast/reports/zap-report.html
+```
