@@ -1,1 +1,21 @@
+# Terraform files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform lock file (optional to keep)
+# .terraform.lock.hcl
+
+# Sensitive variables
+*.tfvars
+*.tfvars.json
+
+# CLI config
+.terraformrc
+terraform.rc
+
+# OS / misc
+.DS_Store
+Thumbs.db
 .env
