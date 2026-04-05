@@ -346,19 +346,33 @@ cat README.md   # Each assignment has its own guide
 
 \`\`\`
 Secrets Management    ██████░░░░ 3/5   🔄 In Progress  (Gitleaks · Vault · ESO)
+
 Container Security    ████░░░░░░ 2/6   🔄 In Progress  (Trivy · OPA/Gatekeeper)
+
 IaC Security          ██░░░░░░░░ 1/4   🔄 In Progress  (Checkov)
+
 SAST                  █████░░░░░ 1/2   🔄 In Progress  (SonarQube)
+
 DAST / API Testing    ███░░░░░░░ 1/3   🔄 In Progress  (OWASP ZAP)
+
 Supply Chain          ███░░░░░░░ 1/3   🔄 In Progress  (SBOM / Syft)
+
 Network Security      ███░░░░░░░ 1/3   🔄 In Progress  (NetworkPolicy)
+
 CI/CD Security        ██░░░░░░░░ 1/4   🔄 In Progress  (GitHub Actions)
+
 Compliance            ██░░░░░░░░ 1/5   🔄 In Progress  (kube-bench)
+
 Runtime Security      ███░░░░░░░ 1/3   🔄 In Progress  (Falco)
+
 Access & Identity     ██░░░░░░░░ 1/4   🔄 In Progress  (Kubernetes RBAC)
+
 Cloud Security        ░░░░░░░░░░ 0/5   📅 Upcoming
+
 Monitoring & SIEM     ░░░░░░░░░░ 0/3   📅 Upcoming
+
 Capstone              ░░░░░░░░░░ 0/1   📅 Upcoming
+
 
 Overall: ██████░░░░  14/50 (28%)
 \`\`\`
