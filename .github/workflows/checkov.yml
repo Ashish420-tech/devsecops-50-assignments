@@ -1,0 +1,27 @@
+name: Checkov IaC Scan
+
+on:
+  push:
+    branches:
+      - assignment-03
+  pull_request:
+
+jobs:
+  checkov-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ./assignment-03-checkov/terraform
+          output_format: sarif
+          output_file_path: checkov-report.sarif
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov-report.sarif

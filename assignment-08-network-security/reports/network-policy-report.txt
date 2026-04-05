@@ -1,0 +1,15 @@
+Assignment 8 - Network Policy Enforcement
+
+1. Baseline Test:
+- Pod to service communication successful
+- Output: Welcome to nginx
+
+2. After Deny-All Policy:
+- Communication blocked
+- Curl failed / timeout
+
+3. After Allow Policy:
+- Communication restored between nginx pods
+
+Conclusion:
+Network policies successfully enforced zero-trust networking.
