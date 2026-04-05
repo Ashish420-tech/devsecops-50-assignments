@@ -167,3 +167,16 @@ Integrate Gitleaks into GitHub Actions to:
 ## 📸 Screenshot — Gitleaks Detection Output
 
 ![Gitleaks Scan Result](./gitleaks-output.png)
+## 📸 GitHub Actions Workflow Execution
+
+This shows the Gitleaks workflow execution in GitHub Actions.
+
+![GitHub Workflow](./github-workflow.png)
+
+---
+
+## 📸 Secret Remediation
+
+After detecting the secret, it was removed and secured using environment variables.
+
+![Secret Removed](./secret-removed.png)
