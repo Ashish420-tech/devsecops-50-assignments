@@ -4,6 +4,23 @@
 
                                             🔗 LinkedIn: https://www.linkedin.com/in/your-linkedin  
                                             🔗 GitHub: https://github.com/Ashish420-tech/devsecops-50-assignments  
+<p align="center">
+
+<img src="https://img.shields.io/badge/DevSecOps-Project-blue?style=for-the-badge&logo=github" />
+<img src="https://img.shields.io/badge/Assignments-50-orange?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Completed-15-success?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Progress-30%25-brightgreen?style=for-the-badge" />
+
+</p>
+
+<p align="center">
+
+<img src="https://img.shields.io/badge/Terraform-Secured-623CE4?style=flat&logo=terraform" />
+<img src="https://img.shields.io/badge/AWS-KMS%20Enabled-FF9900?style=flat&logo=amazonaws" />
+<img src="https://img.shields.io/badge/Kubernetes-Secure-326CE5?style=flat&logo=kubernetes" />
+<img src="https://img.shields.io/badge/Supply%20Chain-Signed-success?style=flat" />
+
+</p>
 
 ---
 
@@ -182,6 +199,17 @@ Encrypted state using AWS KMS
 Prevented sensitive data exposure in tfstate
 
 Built with security-first thinking by Ashish Mondal
+## 🤝 Let's Connect
+
+If you're interested in:
+- DevSecOps Engineering
+- Cloud Security
+- Kubernetes Security
+- Security Automation
+
+📩 Connect with me on LinkedIn  
+⭐ Star this repo if it helps you  
+🚀 Follow for more DevSecOps content  
 
 "Security is not a feature — it's a foundation."
 
