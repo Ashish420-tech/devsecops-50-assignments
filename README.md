@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const content = `<div align="center">
+const rawContent = `<div align="center">
 
 <img src="https://img.shields.io/badge/DevSecOps-50%20Assignments-0a0a0a?style=for-the-badge&logo=shield&logoColor=white" />
 <img src="https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
@@ -386,82 +386,212 @@ Overall: ██████░░░░  14/50 (28%)
 
 </div>`;
 
+// ── mini markdown renderer ──────────────────────────────────────────
+let _key = 0;
+const k = () => _key++;
+
+function parseInline(str) {
+  const out = [];
+  let s = str;
+  while (s.length) {
+    let m;
+    if ((m = s.match(/^\*\*\*(.+?)\*\*\*/))) { out.push(<strong key={k()}><em>{m[1]}</em></strong>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^\*\*(.+?)\*\*/))) { out.push(<strong key={k()}>{m[1]}</strong>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^\*(.+?)\*/))) { out.push(<em key={k()}>{m[1]}</em>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^`([^`]+)`/))) { out.push(<code key={k()} style={{background:"#1f2937",color:"#79c0ff",padding:"1px 6px",borderRadius:4,fontSize:"0.87em",fontFamily:"monospace"}}>{m[1]}</code>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/))) { out.push(<img key={k()} src={m[2]} alt={m[1]} style={{verticalAlign:"middle",height:20,marginRight:3}}/>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^\[([^\]]+)\]\(([^)]+)\)/))) { out.push(<a key={k()} href={m[2]} target="_blank" rel="noreferrer" style={{color:"#58a6ff",textDecoration:"none"}}>{m[1]}</a>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^<img[^>]+src="([^"]+)"[^>]*\/?>/))) { out.push(<img key={k()} src={m[1]} alt="" style={{verticalAlign:"middle",height:22,marginRight:4}}/>); s = s.slice(m[0].length); }
+    else if ((m = s.match(/^<[^>]+>/))) { s = s.slice(m[0].length); }
+    else { out.push(s[0]); s = s.slice(1); }
+  }
+  return out;
+}
+
+function renderMd(text) {
+  _key = 0;
+  const lines = text.split("\n");
+  const els = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trim = line.trim();
+
+    // skip html wrappers
+    if (/^<\/?div/.test(trim)) { i++; continue; }
+
+    // HR
+    if (/^---+$/.test(trim)) {
+      els.push(<hr key={k()} style={{border:"none",borderTop:"1px solid #30363d",margin:"20px 0"}}/>);
+      i++; continue;
+    }
+
+    // Headings
+    let m;
+    if ((m = trim.match(/^# (.+)/))) { els.push(<h1 key={k()} style={{fontSize:26,fontWeight:700,color:"#e6edf3",borderBottom:"2px solid #30363d",paddingBottom:8,marginTop:20,marginBottom:10}}>{parseInline(m[1])}</h1>); i++; continue; }
+    if ((m = trim.match(/^## (.+)/))) { els.push(<h2 key={k()} style={{fontSize:19,fontWeight:700,color:"#e6edf3",borderBottom:"1px solid #21262d",paddingBottom:5,marginTop:24,marginBottom:8}}>{parseInline(m[1])}</h2>); i++; continue; }
+    if ((m = trim.match(/^### (.+)/))) { els.push(<h3 key={k()} style={{fontSize:15,fontWeight:600,color:"#cdd9e5",marginTop:14,marginBottom:4}}>{parseInline(m[1])}</h3>); i++; continue; }
+
+    // Blockquote
+    if (trim.startsWith("> ")) {
+      els.push(<blockquote key={k()} style={{borderLeft:"3px solid #388bfd",paddingLeft:14,margin:"10px 0",color:"#8b949e",fontStyle:"italic",fontSize:13}}>{parseInline(trim.slice(2))}</blockquote>);
+      i++; continue;
+    }
+
+    // Code block
+    if (line.startsWith("```")) {
+      i++;
+      const cLines = [];
+      while (i < lines.length && !lines[i].startsWith("```")) { cLines.push(lines[i]); i++; }
+      i++;
+      els.push(<pre key={k()} style={{background:"#1f2937",border:"1px solid #30363d",borderRadius:8,padding:"12px 16px",overflowX:"auto",margin:"10px 0",fontSize:11.5,lineHeight:1.65,color:"#e2e8f0",fontFamily:"'Courier New',monospace"}}><code>{cLines.join("\n")}</code></pre>);
+      continue;
+    }
+
+    // Details block
+    if (trim === "<details>") {
+      i++;
+      let summary = "";
+      if (i < lines.length && lines[i].trim().startsWith("<summary>")) {
+        summary = lines[i].replace(/<\/?summary>/g,"").replace(/<\/?b>/g,"").trim();
+        i++;
+      }
+      const dLines = [];
+      while (i < lines.length && lines[i].trim() !== "</details>") { dLines.push(lines[i]); i++; }
+      i++;
+      const id = k();
+      els.push(
+        <DetailsBlock key={id} summary={summary} content={dLines.join("\n")} />
+      );
+      continue;
+    }
+
+    // Table
+    if (trim.includes("|") && lines[i+1] && lines[i+1].includes("|---")) {
+      const headers = trim.split("|").filter(c=>c.trim()).map(c=>c.trim());
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].includes("|")) {
+        rows.push(lines[i].split("|").filter(c=>c.trim()).map(c=>c.trim()));
+        i++;
+      }
+      els.push(
+        <div key={k()} style={{overflowX:"auto",margin:"10px 0"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5}}>
+            <thead><tr style={{background:"#161b22"}}>
+              {headers.map((h,j)=><th key={j} style={{padding:"7px 12px",textAlign:"left",color:"#8b949e",fontWeight:600,borderBottom:"1px solid #30363d",whiteSpace:"nowrap"}}>{parseInline(h)}</th>)}
+            </tr></thead>
+            <tbody>
+              {rows.map((row,ri)=>(
+                <tr key={ri} style={{borderBottom:"1px solid #21262d",background:ri%2===0?"transparent":"#161b22"}}>
+                  {row.map((cell,ci)=><td key={ci} style={{padding:"6px 12px",color:"#c9d1d9"}}>{parseInline(cell)}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      continue;
+    }
+
+    // Bullet list
+    if (/^[-*] /.test(trim)) {
+      const items = [];
+      while (i < lines.length && /^[-*] /.test(lines[i].trim())) {
+        items.push(lines[i].trim().replace(/^[-*] /,""));
+        i++;
+      }
+      els.push(
+        <ul key={k()} style={{paddingLeft:20,margin:"6px 0"}}>
+          {items.map((it,j)=><li key={j} style={{marginBottom:4,fontSize:13,lineHeight:1.65,color:"#c9d1d9"}}>{parseInline(it)}</li>)}
+        </ul>
+      );
+      continue;
+    }
+
+    // Badge-only img line
+    if (trim.startsWith("<img ")) {
+      const srcs = [...trim.matchAll(/src="([^"]+)"/g)].map(m=>m[1]);
+      els.push(<div key={k()} style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:4,margin:"6px 0"}}>{srcs.map((s,j)=><img key={j} src={s} alt="" style={{height:24}}/>)}</div>);
+      i++; continue;
+    }
+
+    // Empty
+    if (!trim) { els.push(<div key={k()} style={{height:5}}/>); i++; continue; }
+
+    // Paragraph
+    els.push(<p key={k()} style={{margin:"4px 0",fontSize:13,lineHeight:1.75,color:"#c9d1d9"}}>{parseInline(trim)}</p>);
+    i++;
+  }
+  return els;
+}
+
+function DetailsBlock({ summary, content }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{background:"#161b22",border:"1px solid #30363d",borderRadius:8,marginBottom:6}}>
+      <div onClick={()=>setOpen(o=>!o)} style={{padding:"10px 14px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,userSelect:"none"}}>
+        <span style={{color:"#8b949e",fontSize:10,transition:"transform 0.2s",display:"inline-block",transform:open?"rotate(90deg)":"rotate(0deg)"}}>▶</span>
+        <span style={{fontWeight:600,color:"#58a6ff",fontSize:13}}>{parseInline(summary)}</span>
+      </div>
+      {open && (
+        <div style={{padding:"10px 16px 14px",borderTop:"1px solid #30363d",fontSize:13,color:"#c9d1d9",lineHeight:1.7}}>
+          {renderMd(content)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── main component ─────────────────────────────────────────────────
 export default function ReadmeViewer() {
   const [copied, setCopied] = useState(false);
+  const [tab, setTab] = useState("preview");
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content).then(() => {
+  const copy = () => {
+    navigator.clipboard.writeText(rawContent).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
   };
 
   return (
-    <div style={{ fontFamily: "monospace", background: "#0d1117", minHeight: "100vh", color: "#c9d1d9", display: "flex", flexDirection: "column" }}>
-      {/* Header bar */}
-      <div style={{
-        background: "#161b22",
-        borderBottom: "1px solid #30363d",
-        padding: "12px 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: 0,
-        zIndex: 10
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 18 }}>📄</span>
-          <span style={{ color: "#58a6ff", fontWeight: 700, fontSize: 14 }}>README.md</span>
-          <span style={{ color: "#8b949e", fontSize: 12 }}>— DevSecOps 50 Assignments</span>
+    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:"#0d1117",minHeight:"100vh",display:"flex",flexDirection:"column",color:"#c9d1d9"}}>
+
+      {/* ── toolbar ── */}
+      <div style={{background:"#161b22",borderBottom:"1px solid #30363d",padding:"9px 18px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:99}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:17}}>🛡️</span>
+          <span style={{color:"#58a6ff",fontWeight:700,fontSize:13}}>README.md</span>
+          <span style={{background:"#21262d",color:"#3fb950",fontSize:11,padding:"2px 8px",borderRadius:10,border:"1px solid #30363d",fontWeight:600}}>14 / 50 · 28%</span>
         </div>
-        <button
-          onClick={handleCopy}
-          style={{
-            background: copied ? "#238636" : "#21262d",
-            color: copied ? "#fff" : "#c9d1d9",
-            border: "1px solid " + (copied ? "#2ea043" : "#30363d"),
-            borderRadius: 6,
-            padding: "6px 16px",
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 600,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            transition: "all 0.2s"
-          }}
-        >
-          {copied ? "✅ Copied!" : "📋 Copy All"}
-        </button>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{display:"flex",background:"#21262d",borderRadius:6,padding:2,border:"1px solid #30363d"}}>
+            {[["preview","👁 Preview"],["raw","📄 Raw"]].map(([t,label])=>(
+              <button key={t} onClick={()=>setTab(t)} style={{background:tab===t?"#388bfd":"transparent",color:tab===t?"#fff":"#8b949e",border:"none",borderRadius:4,padding:"4px 11px",cursor:"pointer",fontSize:11.5,fontWeight:600,transition:"all 0.15s"}}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <button onClick={copy} style={{background:copied?"#238636":"#21262d",color:copied?"#fff":"#c9d1d9",border:"1px solid "+(copied?"#2ea043":"#30363d"),borderRadius:6,padding:"5px 13px",cursor:"pointer",fontSize:12,fontWeight:600,transition:"all 0.2s",whiteSpace:"nowrap"}}>
+            {copied?"✅ Copied!":"📋 Copy All"}
+          </button>
+        </div>
       </div>
 
-      {/* Content */}
-      <div style={{
-        flex: 1,
-        overflowY: "auto",
-        padding: "24px 28px",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word",
-        fontSize: 13,
-        lineHeight: 1.7,
-        color: "#c9d1d9"
-      }}>
-        {content}
+      {/* ── content ── */}
+      <div style={{flex:1,overflowY:"auto"}}>
+        {tab === "preview"
+          ? <div style={{maxWidth:880,margin:"0 auto",padding:"22px 28px"}}>{renderMd(rawContent)}</div>
+          : <pre style={{margin:0,padding:"18px 22px",whiteSpace:"pre-wrap",wordBreak:"break-word",fontSize:12,lineHeight:1.7,color:"#c9d1d9",fontFamily:"'Courier New',monospace"}}>{rawContent}</pre>
+        }
       </div>
 
-      {/* Footer */}
-      <div style={{
-        background: "#161b22",
-        borderTop: "1px solid #30363d",
-        padding: "8px 20px",
-        color: "#8b949e",
-        fontSize: 11,
-        display: "flex",
-        justifyContent: "space-between"
-      }}>
-        <span>14 / 50 assignments complete · 28% progress</span>
-        <span>Click "Copy All" → paste into your GitHub README.md</span>
+      {/* ── footer ── */}
+      <div style={{background:"#161b22",borderTop:"1px solid #30363d",padding:"6px 18px",color:"#8b949e",fontSize:11,display:"flex",justifyContent:"space-between"}}>
+        <span>Ashish Mondal · DevSecOps 50 Assignments</span>
+        <span>Switch to <strong style={{color:"#58a6ff"}}>Raw</strong> → Copy → paste into GitHub README.md</span>
       </div>
     </div>
   );
