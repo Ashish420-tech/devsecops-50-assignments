@@ -1,0 +1,31 @@
+name: SonarQube Scan
+
+on:
+push:
+branches:
+- assignment-04
+
+jobs:
+sonar-scan:
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Code
+    uses: actions/checkout@v3
+
+  - name: Install SonarScanner
+    run: |
+      wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+      unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+      sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
+      echo "/opt/sonar-scanner/bin" >> $GITHUB_PATH
+
+  - name: Run SonarQube Scan
+    run: |
+      sonar-scanner \
+        -Dsonar.projectKey=assignment-04 \
+        -Dsonar.sources=app.py \
+        -Dsonar.host.url=http://localhost:9000 \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+```

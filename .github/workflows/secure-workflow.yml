@@ -1,0 +1,30 @@
+name: Secure CI Pipeline
+
+on:
+  push:
+    branches:
+      - assignment-11-cicd-security
+  pull_request:
+    branches:
+      - assignment-11-cicd-security
+
+permissions:
+  contents: read
+  security-events: write
+  id-token: write
+jobs:
+  codeql-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Generate OIDC Token
+        run: echo "OIDC token will be used for secure authentication"
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
