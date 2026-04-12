@@ -19,3 +19,26 @@ terraform.rc
 .DS_Store
 Thumbs.db
 .env
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Prometheus data
+prometheus-2.51.0.linux-amd64/data/
+
+# Grafana
+*.db
+
+# Screenshots (optional if large)
+# docs/screenshots/
+
+# Environment
+.env
