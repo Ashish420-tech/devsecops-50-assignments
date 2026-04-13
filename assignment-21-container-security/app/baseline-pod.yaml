@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: baseline-pod
+  namespace: baseline-namespace
+spec:
+  containers:
+  - name: nginx
+    image: nginx
