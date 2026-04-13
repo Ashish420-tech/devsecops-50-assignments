@@ -1,0 +1,116 @@
+# ========================
+# ELASTICSEARCH
+# ========================
+elasticsearch:
+  replicas: 1
+
+  sysctlInitContainer:
+    enabled: false
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+  persistence:
+    enabled: false   # 🔥 IMPORTANT (disable to avoid PV issues)
+
+  esJavaOpts: "-Xms512m -Xmx512m"
+
+  esConfig:
+    elasticsearch.yml: |
+      discovery.type: single-node
+      xpack.security.enabled: false   # disable auth for simplicity (important)
+
+# ========================
+# KIBANA
+# ========================
+kibana:
+  service:
+    type: NodePort
+    port: 5601
+
+  elasticsearchHosts: "http://elasticsearch-master:9200"
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+# ========================
+# LOGSTASH
+# ========================
+logstash:
+  enabled: true
+
+  service:
+    type: ClusterIP
+    ports:
+      - name: beats
+        port: 5044
+
+  logstashPipeline:
+    logstash.conf: |
+      input {
+        beats {
+          port => 5044
+        }
+      }
+
+      filter {
+        json {
+          source => "message"
+          skip_on_invalid_json => true
+        }
+      }
+
+      output {
+        elasticsearch {
+          hosts => ["http://elasticsearch-master:9200"]
+          index => "filebeat-%{+YYYY.MM.dd}"
+        }
+        stdout { codec => rubydebug }
+      }
+
+# ========================
+# FILEBEAT
+# ========================
+filebeat:
+  enabled: true
+
+  filebeatConfig:
+    filebeat.yml: |
+      filebeat.inputs:
+        - type: container
+          paths:
+            - /var/log/containers/*.log
+
+      processors:
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+
+      output.logstash:
+        hosts: ["logstash:5044"]
+
+  daemonset:
+    enabled: true
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "200m"
+      memory: "200Mi"
+
+# ========================
+# RBAC
+# ========================
+rbac:
+  create: true
