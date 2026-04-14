@@ -1,0 +1,12 @@
+1. Broken Object Level Authorization (API1)
+   - grafana-unauth-access:organization-info-exposed
+
+2. Security Misconfiguration (API7)
+   - cors-misconfig:arbitrary-origin
+   - http-missing-security-headers
+
+3. Excessive Data Exposure (API3)
+   - email-extractor
+
+4. Improper Assets Management (API9)
+   - exposed endpoints (/api/users)

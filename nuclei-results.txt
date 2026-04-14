@@ -1,0 +1,33 @@
+[waf-detect:cloudflare] [http] [info] https://jsonplaceholder.typicode.com/users
+[waf-detect:cloudflare] [http] [info] https://jsonplaceholder.typicode.com/posts
+[cors-misconfig:arbitrary-origin] [http] [info] https://jsonplaceholder.typicode.com/users [cors_origin="https://localhost.1tose.com"]
+[cors-misconfig:arbitrary-origin] [http] [info] https://jsonplaceholder.typicode.com/posts [cors_origin="http://og0yatypicode.com"]
+[email-extractor] [http] [info] https://jsonplaceholder.typicode.com/users ["Nathan@yesenia.net","Julianne.OConner@kory.org","Chaim_McDermott@dana.io"]
+[grafana-unauth-access:organization-info-exposed] [http] [high] https://jsonplaceholder.typicode.com/users/api/users
+[grafana-unauth-access:organization-info-exposed] [http] [high] https://jsonplaceholder.typicode.com/posts/api/users
+[http-missing-security-headers:strict-transport-security] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:content-security-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:permissions-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:x-permitted-cross-domain-policies] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:referrer-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:clear-site-data] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:cross-origin-opener-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:missing-content-type] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:x-frame-options] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:cross-origin-embedder-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:cross-origin-resource-policy] [http] [info] https://jsonplaceholder.typicode.com/users
+[http-missing-security-headers:cross-origin-resource-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:strict-transport-security] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:permissions-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:x-frame-options] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:referrer-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:cross-origin-opener-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:missing-content-type] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:content-security-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:x-permitted-cross-domain-policies] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:clear-site-data] [http] [info] https://jsonplaceholder.typicode.com/posts
+[http-missing-security-headers:cross-origin-embedder-policy] [http] [info] https://jsonplaceholder.typicode.com/posts
+[tech-detect:express] [http] [info] https://jsonplaceholder.typicode.com/users
+[tech-detect:cloudflare] [http] [info] https://jsonplaceholder.typicode.com/users
+[tech-detect:express] [http] [info] https://jsonplaceholder.typicode.com/posts
+[tech-detect:cloudflare] [http] [info] https://jsonplaceholder.typicode.com/posts
