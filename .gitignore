@@ -88,3 +88,6 @@ bin/
 *.tmp
 *.cache
 
+checkov-env/
+node_modules/
+.scannerwork/
