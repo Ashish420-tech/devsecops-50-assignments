@@ -1,0 +1,22 @@
+replicas: 1
+
+sysctlInitContainer:
+  enabled: false
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1"
+    memory: "2Gi"
+
+persistence:
+  enabled: false
+
+esJavaOpts: "-Xms512m -Xmx512m"
+
+esConfig:
+  elasticsearch.yml: |
+    discovery.type: single-node
+    xpack.security.enabled: false

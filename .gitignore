@@ -1,0 +1,90 @@
+# =========================
+
+# OS Files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# Editor / IDE
+
+# =========================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+
+# Python
+
+# =========================
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# =========================
+
+# Node.js
+
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+
+# Docker
+
+# =========================
+
+*.log
+
+# =========================
+
+# Kubernetes / Istio
+
+# =========================
+
+kubeconfig
+*.yaml.bak
+
+# =========================
+
+# Minikube / Local Binaries
+
+# =========================
+
+minikube-linux-amd64
+istio-*/
+bin/
+
+# =========================
+
+# Terraform (if used later)
+
+# =========================
+
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# =========================
+
+# Reports / Temp Files
+
+# =========================
+
+*.tmp
+*.cache
+
