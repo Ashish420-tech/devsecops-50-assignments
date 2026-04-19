@@ -1,93 +1,72 @@
 # =========================
-
 # OS Files
-
 # =========================
-
 .DS_Store
 Thumbs.db
 
 # =========================
-
 # Editor / IDE
-
 # =========================
-
 .vscode/
 .idea/
 *.swp
 *.swo
 
 # =========================
-
 # Python
-
 # =========================
-
-**pycache**/
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
 venv/
 .env
+.env.*
 
 # =========================
-
 # Node.js
-
 # =========================
-
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 # =========================
-
 # Docker
-
 # =========================
-
 *.log
 
 # =========================
-
 # Kubernetes / Istio
-
 # =========================
-
 kubeconfig
 *.yaml.bak
 
 # =========================
-
-# Minikube / Local Binaries
-
+# Terraform
 # =========================
-
-minikube-linux-amd64
-istio-*/
-bin/
-
-# =========================
-
-# Terraform (if used later)
-
-# =========================
-
 .terraform/
+.terraform.lock.hcl
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+crash.log
 
 # =========================
-
-# Reports / Temp Files
+# Lambda / Build Artifacts
+# =========================
+*.zip
 
 # =========================
+# Security / Secrets
+# =========================
+*.pem
+*.key
 
+# =========================
+# Temp / Cache
+# =========================
 *.tmp
 *.cache
-
-checkov-env/
-node_modules/
 .scannerwork/
+checkov-env/
+bin/
