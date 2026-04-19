@@ -70,3 +70,22 @@ crash.log
 .scannerwork/
 checkov-env/
 bin/
+# Node
+node_modules/
+npm-debug.log
+
+# Environment
+.env
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# AWS keys (VERY IMPORTANT)
+*.pem
+
+# Terraform (if used later)
+*.tfstate
+*.tfstate.backup
