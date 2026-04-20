@@ -2,7 +2,9 @@ name: Snyk Security Scan
 
 on:
   push:
-    branches: [main, assignment-36-snyk-security]
+    branches:
+      - main
+      - assignment-36-snyk-security
   pull_request:
 
 jobs:
