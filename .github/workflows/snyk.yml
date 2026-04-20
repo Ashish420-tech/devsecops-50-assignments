@@ -11,9 +11,9 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      security-events: write
+    defaults:
+      run:
+        working-directory: assignment-36-snyk-security   # 🔥 IMPORTANT FIX
 
     steps:
       - name: Checkout code
@@ -32,10 +32,10 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: --sarif-file-output=snyk.sarif --severity-threshold=high
 
       - name: Upload SARIF results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: snyk.sarif
+          sarif_file: assignment-36-snyk-security/snyk.sarif   # 🔥 IMPORTANT FIX
