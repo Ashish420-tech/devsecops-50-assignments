@@ -1,11 +1,53 @@
 # =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.tmp
+
+# =========================
+# Python
+# =========================
+venv/
+.env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Build / Coverage
+# =========================
+dist/
+build/
+coverage/
+
+# =========================
+# Snyk / Security Reports
+# =========================
+snyk.sarif
+*.sarif
+
+# =========================
 # OS Files
 # =========================
 .DS_Store
 Thumbs.db
 
 # =========================
-# Editor / IDE
+# IDE / Editor
 # =========================
 .vscode/
 .idea/
@@ -13,79 +55,20 @@ Thumbs.db
 *.swo
 
 # =========================
-# Python
-# =========================
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-venv/
-.env
-.env.*
-
-# =========================
-# Node.js
-# =========================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# =========================
-# Docker
+# Logs
 # =========================
 *.log
 
 # =========================
-# Kubernetes / Istio
-# =========================
-kubeconfig
-*.yaml.bak
-
-# =========================
-# Terraform
-# =========================
-.terraform/
-.terraform.lock.hcl
-*.tfstate
-*.tfstate.*
-crash.log
-
-# =========================
-# Lambda / Build Artifacts
-# =========================
-*.zip
-
-# =========================
-# Security / Secrets
-# =========================
-*.pem
-*.key
-
-# =========================
-# Temp / Cache
+# Misc
 # =========================
 *.tmp
-*.cache
-.scannerwork/
-checkov-env/
-bin/
-# Node
-node_modules/
-npm-debug.log
-
-# Environment
-.env
-
-# OS files
-.DS_Store
-
-# Logs
-*.log
-
-# AWS keys (VERY IMPORTANT)
-*.pem
-
-# Terraform (if used later)
+.cache/
+# =========================
+# Terraform (CRITICAL)
+# =========================
+.terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+*.tfvars
+*.zip
