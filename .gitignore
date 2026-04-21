@@ -90,3 +90,21 @@ kubeconfig*
 # Docker
 *.tar
 docker-compose.override.yml
+# AWS
+.aws/
+credentials
+config
+
+# Kubernetes
+*.kubeconfig
+kubeconfig*
+*.secret.yaml
+
+# Certificates / Keys
+*.pem
+*.key
+*.crt
+
+# Docker
+*.tar
+docker-compose.override.yml
