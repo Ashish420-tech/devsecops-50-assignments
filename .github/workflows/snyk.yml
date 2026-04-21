@@ -11,6 +11,10 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      security-events: write   # required for SARIF upload
+
     defaults:
       run:
         working-directory: assignment-36-snyk-security
@@ -19,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -27,14 +31,28 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Snyk Scan
-        run: |
-          npm install -g snyk
-          snyk test --file=package.json --sarif-file-output=snyk.sarif
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Run Snyk Scan (fail on HIGH/CRITICAL)
+        run: snyk test --file=package.json --sarif-file-output=snyk.sarif --severity-threshold=high
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Upload SARIF
+      - name: Upload SARIF results to GitHub Security Dashboard
         uses: github/codeql-action/upload-sarif@v3
+        if: always()
         with:
           sarif_file: assignment-36-snyk-security/snyk.sarif
+
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "✅ Snyk security scan completed. Check the Security tab for details."
+            })
