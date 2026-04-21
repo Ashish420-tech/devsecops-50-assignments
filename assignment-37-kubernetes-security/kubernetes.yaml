@@ -1,0 +1,19 @@
+version: "1.0"
+
+scan:
+  enabled: true
+  severity: ["CRITICAL", "HIGH", "MEDIUM"]
+  output:
+    format: sarif
+    file: kubernetes-results.sarif
+
+filters:
+  exclude:
+    - tests/**
+    - vendor/**
+    - node_modules/**
+
+notifications:
+  on_failure: true
+  channels:
+    - slack
