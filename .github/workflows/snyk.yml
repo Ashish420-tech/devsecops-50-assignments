@@ -2,22 +2,24 @@ name: Snyk Security Scan
 
 on:
   push:
-    branches: [main, assignment-36-snyk-security]
+    branches:
+      - main
+      - assignment-36-snyk-security
   pull_request:
 
 jobs:
   security-scan:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      security-events: write
+    defaults:
+      run:
+        working-directory: assignment-36-snyk-security
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -26,14 +28,13 @@ jobs:
         run: npm install
 
       - name: Run Snyk Scan
-        uses: snyk/actions/node@master
+        run: |
+          npm install -g snyk
+          snyk test --file=package.json --sarif-file-output=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
 
-      - name: Upload SARIF results
+      - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
         with:
-          sarif_file: snyk.sarif
+          sarif_file: assignment-36-snyk-security/snyk.sarif
