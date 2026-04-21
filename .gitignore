@@ -72,3 +72,21 @@ Thumbs.db
 *.tfstate.*
 *.tfvars
 *.zip
+# AWS
+.aws/
+credentials
+config
+
+# Kubernetes
+*.kubeconfig
+kubeconfig*
+*.secret.yaml
+
+# Certificates / Keys
+*.pem
+*.key
+*.crt
+
+# Docker
+*.tar
+docker-compose.override.yml
