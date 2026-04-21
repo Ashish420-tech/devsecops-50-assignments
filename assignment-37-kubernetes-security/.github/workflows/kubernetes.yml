@@ -2,9 +2,13 @@ name: Kubernetes Security Scan
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
+      - assignment-37-kubernetes-security
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   security-scan:
