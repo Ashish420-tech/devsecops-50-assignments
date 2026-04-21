@@ -1,0 +1,2 @@
+"verb":"create","resource":"pods","user":"admin"}
+{"verb":"delete","resource":"namespace","user":"admin"}
