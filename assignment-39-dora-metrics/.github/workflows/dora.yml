@@ -2,7 +2,7 @@ name: DORA Metrics Pipeline
 
 on:
   push:
-    branches: [ assignment-39-dora-metrics ]
+    branches: [ assignment-39-dora-metrics, main ]
   workflow_dispatch:
 
 jobs:
