@@ -10,7 +10,7 @@ package-lock.json.tmp
 # =========================
 # Python
 # =========================
-venv/
+
 .env/
 __pycache__/
 *.pyc
