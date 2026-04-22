@@ -1,0 +1,33 @@
+name: DORA Metrics Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Simulate Build
+        run: echo "Building app..."
+
+      - name: Simulate Deployment
+        run: |
+          echo "Deploying app..."
+          date > deployment.txt
+
+      - name: Track Deployment Frequency
+        run: |
+          echo "Deployment recorded at $(date)" >> dora_metrics.log
+
+      - name: Upload Metrics Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dora-metrics
+          path: dora_metrics.log
