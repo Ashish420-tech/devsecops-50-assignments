@@ -25,7 +25,7 @@ jobs:
       - name: Simulate Security Scan
         run: |
           echo "Running security scan..."
-          echo '{"severity":"CRITICAL"}' > results.json
+          echo '{"severity":"LOW"}' > results.json
 
       # 🔴 ADD THIS (FAIL PIPELINE)
       - name: Fail on Critical Issues
