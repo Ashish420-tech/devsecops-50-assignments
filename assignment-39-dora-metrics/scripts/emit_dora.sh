@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-EVENT_TYPE="${1:-deployment}"   # deployment | change | incident | recovery
-STATUS="${2:-success}"          # success | failure
-TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-SHA="${GITHUB_SHA:-local}"
-ACTOR="${GITHUB_ACTOR:-local}"
+EVENT_TYPE="${1:-deployment}"
+STATUS="${2:-success}"
 
 cat <<EOF > dora_event.json
 {
-  "event_type": "$EVENT_TYPE",
-  "status": "$STATUS",
-  "timestamp": "$TS",
-  "commit": "$SHA",
-  "actor": "$ACTOR",
-  "repo": "${GITHUB_REPOSITORY:-local}"
+  "title": "DORA: $EVENT_TYPE",
+  "text": "DORA Event Triggered\nType: $EVENT_TYPE\nStatus: $STATUS\nCommit: $GITHUB_SHA\nActor: $GITHUB_ACTOR",
+  "tags": ["dora","event:$EVENT_TYPE","status:$STATUS"],
+  "alert_type": "info",
+  "source_type_name": "github-actions"
 }
 EOF
-
-echo "Emitted dora_event.json:"
-cat dora_event.json
