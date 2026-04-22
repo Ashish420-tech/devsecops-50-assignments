@@ -81,3 +81,16 @@ jobs:
         with:
           name: dora-event
           path: dora_event.json
+      - name: Send DORA Event to Datadog
+        if: always()
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+         run: |
+           if [ -f dora_event.json ]; then
+              curl -X POST "https://api.datadoghq.com/api/v1/events" \
+                   -H "Content-type: application/json" \
+                   -H "DD-API-KEY: $DD_API_KEY" \
+                   -d @dora_event.json || true
+           else
+              echo "No event file found"
+           fi
