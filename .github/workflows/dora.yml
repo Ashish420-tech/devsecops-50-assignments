@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # Build & Deploy Simulation
+      # -----------------------------
       - name: Simulate Build
         run: echo "Building app..."
 
@@ -21,13 +24,14 @@ jobs:
           echo "Deploying app..."
           date > deployment.txt
 
-      # 🔴 ADD THIS (CRITICAL STEP)
+      # -----------------------------
+      # Security Scan + Gate
+      # -----------------------------
       - name: Simulate Security Scan
         run: |
           echo "Running security scan..."
           echo '{"severity":"LOW"}' > results.json
 
-      # 🔴 ADD THIS (FAIL PIPELINE)
       - name: Fail on Critical Issues
         run: |
           if grep -q CRITICAL results.json; then
@@ -37,12 +41,43 @@ jobs:
             echo "✅ No critical issues"
           fi
 
+      # -----------------------------
+      # DORA Metrics Tracking
+      # -----------------------------
       - name: Track Deployment Frequency
         run: |
           echo "Deployment recorded at $(date)" >> dora_metrics.log
+          echo "Commit: $GITHUB_SHA" >> dora_metrics.log
+          echo "Author: $GITHUB_ACTOR" >> dora_metrics.log
 
-      - name: Upload Metrics Artifact
+      # -----------------------------
+      # Emit DORA Events (Four Keys)
+      # -----------------------------
+      - name: Emit Deployment Event
+        run: |
+          bash assignment-39-dora-metrics/scripts/emit_dora.sh deployment success
+
+      - name: Emit Recovery Event
+        if: success()
+        run: |
+          bash assignment-39-dora-metrics/scripts/emit_dora.sh recovery success
+
+      - name: Emit Incident Event (on failure)
+        if: failure()
+        run: |
+          bash assignment-39-dora-metrics/scripts/emit_dora.sh incident failure
+
+      # -----------------------------
+      # Upload Artifacts
+      # -----------------------------
+      - name: Upload DORA Metrics Artifact
         uses: actions/upload-artifact@v4
         with:
           name: dora-metrics
           path: dora_metrics.log
+
+      - name: Upload DORA Event
+        uses: actions/upload-artifact@v4
+        with:
+          name: dora-event
+          path: dora_event.json
