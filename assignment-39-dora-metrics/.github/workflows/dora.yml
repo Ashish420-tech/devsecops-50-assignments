@@ -2,9 +2,9 @@ name: DORA Metrics Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ assignment-39-dora-metrics ]
   pull_request:
-    branches: [ main ]
+    branches: [ assignment-39-dora-metrics ]
 
 jobs:
   build-deploy:
