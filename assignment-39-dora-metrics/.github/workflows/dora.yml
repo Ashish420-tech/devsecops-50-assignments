@@ -3,8 +3,7 @@ name: DORA Metrics Pipeline
 on:
   push:
     branches: [ assignment-39-dora-metrics ]
-  pull_request:
-    branches: [ assignment-39-dora-metrics ]
+  workflow_dispatch:
 
 jobs:
   build-deploy:
@@ -21,6 +20,22 @@ jobs:
         run: |
           echo "Deploying app..."
           date > deployment.txt
+
+      # 🔴 ADD THIS (CRITICAL STEP)
+      - name: Simulate Security Scan
+        run: |
+          echo "Running security scan..."
+          echo '{"severity":"CRITICAL"}' > results.json
+
+      # 🔴 ADD THIS (FAIL PIPELINE)
+      - name: Fail on Critical Issues
+        run: |
+          if grep -q CRITICAL results.json; then
+            echo "❌ Critical vulnerabilities found!"
+            exit 1
+          else
+            echo "✅ No critical issues"
+          fi
 
       - name: Track Deployment Frequency
         run: |
