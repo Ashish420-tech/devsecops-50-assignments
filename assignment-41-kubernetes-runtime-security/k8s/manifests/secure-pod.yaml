@@ -8,8 +8,9 @@ spec:
   securityContext:
     runAsNonRoot: true
   containers:
-  - name: nginx
-    image: nginx:1.25
-    securityContext:
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
+    - name: nginx
+      image: nginx:1.25
+      securityContext:
+        privileged: false
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
