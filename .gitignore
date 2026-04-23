@@ -23,7 +23,6 @@ pip-delete-this-directory.txt
 # =========================
 # Environment / Secrets
 # =========================
-.env
 .env.*
 !.env.example
 
@@ -35,10 +34,13 @@ build/
 coverage/
 
 # =========================
-# Snyk / Security Reports
+# Security Reports (SAST/SCA/SCA/IaC)
 # =========================
-snyk.sarif
 *.sarif
+*.sarif.json
+snyk.sarif
+results.json
+report.html
 
 # =========================
 # OS Files
@@ -64,6 +66,7 @@ Thumbs.db
 # =========================
 *.tmp
 .cache/
+
 # =========================
 # Terraform (CRITICAL)
 # =========================
@@ -72,21 +75,49 @@ Thumbs.db
 *.tfstate.*
 *.tfvars
 *.zip
-# AWS
+
+# =========================
+# AWS Credentials
+# =========================
 .aws/
 credentials
 config
 
+# =========================
 # Kubernetes
+# =========================
 *.kubeconfig
 kubeconfig*
 *.secret.yaml
+.kube/
+.minikube/
 
+# =========================
+# Kubernetes Security / Runtime
+# =========================
+policy-report.yaml
+constraint-report.yaml
+
+# =========================
+# Helm (Optional)
+# =========================
+charts/
+*.tgz
+
+# =========================
 # Certificates / Keys
+# =========================
 *.pem
 *.key
 *.crt
 
+# =========================
 # Docker
+# =========================
 *.tar
-docker-compose.override.yml
+
+# =========================
+# Tokens / Sensitive Files
+# =========================
+*.token
+gh_token
