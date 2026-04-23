@@ -1,0 +1,24 @@
+name: Encryption Security Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Detect plaintext secrets
+        run: |
+          echo "Scanning for plaintext secrets..."
+          if grep -r "password=" .; then
+            echo "❌ Plaintext secret found"
+            exit 1
+          else
+            echo "✅ No plaintext secrets"
+          fi
