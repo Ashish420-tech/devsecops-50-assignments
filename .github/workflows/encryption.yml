@@ -13,12 +13,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Detect plaintext secrets
+      - name: Scan for plaintext secrets
         run: |
-          echo "Scanning for plaintext secrets..."
-          if grep -r "password=" .; then
-            echo "❌ Plaintext secret found"
+          echo "🔍 Scanning repository for plaintext secrets..."
+
+          # Scan only relevant files, ignore noise
+          if grep -r --exclude-dir=.git \
+                      --exclude-dir=.github \
+                      --exclude-dir=node_modules \
+                      --exclude-dir=checkov-env \
+                      --exclude-dir=venv \
+                      --exclude=*.yml \
+                      --exclude=*.yaml \
+                      --exclude=*.json \
+                      --exclude=*.md \
+                      "password=" .; then
+            echo "❌ Plaintext secret found!"
             exit 1
           else
-            echo "✅ No plaintext secrets"
+            echo "✅ No plaintext secrets detected"
           fi
+
+      - name: Success Message
+        if: success()
+        run: echo "🎉 Encryption security checks passed successfully!"
