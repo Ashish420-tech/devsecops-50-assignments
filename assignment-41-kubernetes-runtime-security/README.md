@@ -93,7 +93,8 @@ Aligned with:
 * CIS Benchmarks
 * OWASP
 * DevSecOps Maturity Model
-
+Note: Pipeline fails intentionally when insecure manifests (bad-pod.yaml) are present.  
+This demonstrates security gate enforcement.
 ---
 
 ## 👨‍💻 Author
