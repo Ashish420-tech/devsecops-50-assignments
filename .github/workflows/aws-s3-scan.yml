@@ -37,7 +37,7 @@ jobs:
             --framework terraform \
             --output sarif \
             --output-file-path reports/aws-s3-results.sarif \
-            --soft-fail false
+           # REMOVE completely
 
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
