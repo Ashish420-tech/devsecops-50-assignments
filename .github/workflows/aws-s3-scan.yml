@@ -33,7 +33,7 @@ jobs:
       - name: Run Checkov Scan
         run: |
           mkdir -p reports
-          checkov -d terraform \
+          checkov -d assignment-43-s3-security-audit/terraform \
             --framework terraform \
             --output sarif \
             --output-file-path reports/aws-s3-results.sarif \
