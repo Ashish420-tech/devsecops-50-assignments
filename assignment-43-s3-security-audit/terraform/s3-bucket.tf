@@ -1,53 +1,96 @@
 # -----------------------------
-# Provider Configuration
+# Provider
 # -----------------------------
 provider "aws" {
   region = "ap-south-1"
 }
 
 # -----------------------------
-# Generate Unique Bucket Name
+# Unique Bucket Name
 # -----------------------------
 resource "random_id" "bucket_id" {
   byte_length = 4
 }
 
 # -----------------------------
-# Insecure S3 Bucket (INTENTIONAL)
+# KMS Key for Encryption
 # -----------------------------
-resource "aws_s3_bucket" "insecure_bucket" {
-  bucket = "ashish-insecure-bucket-${random_id.bucket_id.hex}"
+resource "aws_kms_key" "s3_key" {
+  description         = "S3 bucket encryption key"
+  enable_key_rotation = true
+}
+
+# -----------------------------
+# Secure S3 Bucket
+# -----------------------------
+resource "aws_s3_bucket" "secure_bucket" {
+  bucket = "ashish-secure-bucket-${random_id.bucket_id.hex}"
 
   tags = {
-    Name        = "InsecureBucket"
-    Environment = "Dev"
+    Name        = "SecureBucket"
+    Environment = "Prod"
   }
 }
 
 # -----------------------------
-# ❌ Public Access Enabled (CRITICAL)
+# Block Public Access
 # -----------------------------
-resource "aws_s3_bucket_public_access_block" "insecure" {
-  bucket = aws_s3_bucket.insecure_bucket.id
+resource "aws_s3_bucket_public_access_block" "secure" {
+  bucket = aws_s3_bucket.secure_bucket.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 # -----------------------------
-# ❌ Public Read ACL (CRITICAL)
+# Enable Versioning
 # -----------------------------
-resource "aws_s3_bucket_acl" "acl" {
-  bucket = aws_s3_bucket.insecure_bucket.id
-  acl    = "public-read"
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.secure_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 # -----------------------------
-# ❌ Missing Security Controls
+# Enable KMS Encryption
 # -----------------------------
-# - No Server-Side Encryption
-# - No Versioning
-# - No Logging
-# - No Bucket Policy Restrictions
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
+  bucket = aws_s3_bucket.secure_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.s3_key.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+# -----------------------------
+# Access Logging
+# -----------------------------
+resource "aws_s3_bucket_logging" "logging" {
+  bucket = aws_s3_bucket.secure_bucket.id
+
+  target_bucket = aws_s3_bucket.secure_bucket.id
+  target_prefix = "logs/"
+}
+
+# -----------------------------
+# Lifecycle Policy
+# -----------------------------
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
+  bucket = aws_s3_bucket.secure_bucket.id
+
+  rule {
+    id     = "cleanup"
+    status = "Enabled"
+
+    expiration {
+      days = 30
+    }
+  }
+}

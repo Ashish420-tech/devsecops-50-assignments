@@ -1,0 +1,12 @@
+version: "1.0"
+
+scan:
+  enabled: true
+  severity: ["CRITICAL", "HIGH", "MEDIUM"]
+  output:
+    format: sarif
+    file: docker-buildkit-results.sarif
+
+filters:
+  exclude:
+    - node_modules/**

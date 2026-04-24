@@ -1,0 +1,10 @@
+{
+  "name": "vulnerable-app",
+  "version": "1.0.0",
+  "description": "Demo vulnerable Node.js app for security scanning",
+  "main": "app.js",
+  "dependencies": {
+    "express": "4.17.1",
+    "lodash": "4.17.15"
+  }
+}
