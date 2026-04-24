@@ -13,16 +13,21 @@ jobs:
     name: Cloud Security Scan (S3 + Terraform)
     runs-on: ubuntu-latest
 
+    # ✅ FIXED PERMISSIONS
     permissions:
       contents: read
       security-events: write
+      pull-requests: write
 
     steps:
+      # -----------------------------
+      # Checkout Code
+      # -----------------------------
       - name: Checkout Code
         uses: actions/checkout@v4
 
       # -----------------------------
-      # Install Python (for Checkov)
+      # Setup Python
       # -----------------------------
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -49,7 +54,7 @@ jobs:
             --soft-fail false
 
       # -----------------------------
-      # Upload SARIF to GitHub Security Tab
+      # Upload SARIF to GitHub
       # -----------------------------
       - name: Upload SARIF Results
         uses: github/codeql-action/upload-sarif@v3
@@ -58,7 +63,7 @@ jobs:
           sarif_file: reports/aws-s3-results.sarif
 
       # -----------------------------
-      # Fail pipeline if critical issues found
+      # Enforce Security Gate
       # -----------------------------
       - name: Enforce Security Gate
         run: |
@@ -71,18 +76,3 @@ jobs:
           else
             echo "✅ No critical vulnerabilities."
           fi
-
-      # -----------------------------
-      # PR Comment (Optional)
-      # -----------------------------
-      - name: Comment PR with Results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '## 🔐 S3 Security Scan Completed\nCheck Security tab for details.'
-            })
