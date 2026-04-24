@@ -1,5 +1,3 @@
-name: S3 Bucket Security Audit and Remediation
-
 on:
   push:
     branches:
