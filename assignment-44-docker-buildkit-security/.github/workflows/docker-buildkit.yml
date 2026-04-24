@@ -1,23 +1,25 @@
-name: Secure Docker Build with BuildKit and SBOM
+name: Advanced DevSecOps Pipeline (BuildKit + SBOM + Cosign)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  security-scan:
+  security:
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       security-events: write
+      id-token: write
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Trivy (Scanner)
+      - name: Install Trivy
         run: |
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https gnupg lsb-release
@@ -26,24 +28,50 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
 
-      - name: Build Docker Image with BuildKit
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh
+
+      - name: Install Cosign
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/sigstore/cosign/main/install.sh | sh
+
+      - name: Build Docker Image
         run: |
           export DOCKER_BUILDKIT=1
-          docker build -t test-app ./app
+          docker build -t devsecops-app:latest ./app
 
-      - name: Scan Image with Trivy
+      - name: Generate SBOM
         run: |
-          trivy image --severity CRITICAL,HIGH --format sarif --output docker-buildkit-results.sarif test-app || true
+          syft devsecops-app:latest -o json > sbom.json
 
-      - name: Fail on Critical Vulnerabilities
+      - name: Scan with Trivy
         run: |
-          CRITICAL_COUNT=$(cat docker-buildkit-results.sarif | grep -c '"level":"error"' || true)
-          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+          trivy image --severity CRITICAL,HIGH \
+            --format sarif \
+            --output trivy-results.sarif \
+            devsecops-app:latest || true
+
+      - name: Fail on Critical
+        run: |
+          COUNT=$(grep -c '"level":"error"' trivy-results.sarif || true)
+          if [ "$COUNT" -gt 0 ]; then
             echo "❌ Critical vulnerabilities found"
             exit 1
           fi
 
-      - name: Upload SARIF to GitHub
+      - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: docker-buildkit-results.sarif
+          sarif_file: trivy-results.sarif
+
+      - name: Sign Image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cosign sign --yes devsecops-app:latest
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
