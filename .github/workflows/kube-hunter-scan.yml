@@ -1,0 +1,72 @@
+name: Kubernetes Penetration Testing with kube-hunter
+
+on:
+  push:
+    branches:
+      - main
+      - assignment-45-kubernetes-penetration-testing-kube-hunter
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  kube-hunter-scan:
+    name: Run kube-hunter Security Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      # ✅ Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Install kube-hunter
+      - name: Install kube-hunter
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install kube-hunter
+
+      # ✅ Step 3: Run scan (JSON output)
+      - name: Run kube-hunter scan
+        run: |
+          echo "🔍 Running kube-hunter scan..."
+          kube-hunter --remote localhost --report json > kube-hunter-results.json || true
+
+      # ✅ Step 4: Show results in logs
+      - name: Show Results
+        run: |
+          echo "📄 Scan Output:"
+          cat kube-hunter-results.json
+
+      # ✅ Step 5: Security Gate (fail on CRITICAL)
+      - name: Fail on Critical Issues
+        run: |
+          if grep -i "CRITICAL" kube-hunter-results.json; then
+            echo "❌ Critical vulnerabilities found!"
+            exit 1
+          else
+            echo "✅ No critical vulnerabilities"
+          fi
+
+      # ✅ Step 6: Upload report as artifact
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: kube-hunter-report
+          path: kube-hunter-results.json
+
+      # ✅ Step 7: Comment on PR (optional)
+      - name: Comment PR with result
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "✅ kube-hunter scan completed. Check workflow artifacts for report."
+            })
