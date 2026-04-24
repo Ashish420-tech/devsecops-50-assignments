@@ -1,0 +1,22 @@
+version: "1.0"
+
+scan:
+  enabled: true
+  severity:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+  output:
+    format: sarif
+    file: kube-hunter-results.sarif
+
+filters:
+  exclude:
+    - node_modules/**
+    - tests/**
+    - vendor/**
+
+notifications:
+  on_failure: true
+  channels:
+    - slack
