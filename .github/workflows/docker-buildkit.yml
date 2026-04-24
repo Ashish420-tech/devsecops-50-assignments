@@ -2,9 +2,13 @@ name: Advanced DevSecOps Pipeline (BuildKit + SBOM + Cosign)
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - assignment-44-docker-buildkit-security
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - assignment-44-docker-buildkit-security
 
 jobs:
   security:
