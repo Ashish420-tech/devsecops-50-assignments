@@ -1,10 +1,13 @@
-name: Advanced DevSecOps Pipeline (BuildKit + SBOM + Cosign)
+name: DevSecOps Pipeline (OPA + BuildKit + SBOM + Scan + Sign)
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - assignment-44-docker-buildkit-security
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   security:
@@ -16,9 +19,36 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout
+      # -----------------------------
+      # Checkout
+      # -----------------------------
+      - name: Checkout Code
         uses: actions/checkout@v4
 
+      # -----------------------------
+      # Install Conftest (OPA)
+      # -----------------------------
+      - name: Install Conftest
+        run: |
+          sudo rm -f /usr/local/bin/conftest
+          VERSION=$(curl -s https://api.github.com/repos/open-policy-agent/conftest/releases/latest | grep tag_name | cut -d '"' -f4)
+          curl -L -o conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/${VERSION}/conftest_${VERSION#v}_Linux_x86_64.tar.gz
+          tar -xzf conftest.tar.gz
+          chmod +x conftest
+          sudo mv conftest /usr/local/bin/
+          which conftest
+          conftest --version
+
+      # -----------------------------
+      # Run Policy Check (OPA)
+      # -----------------------------
+      - name: Run Policy Check (OPA)
+        run: |
+          conftest test assignment-44-docker-buildkit-security/app/Dockerfile --policy policy
+
+      # -----------------------------
+      # Install Trivy
+      # -----------------------------
       - name: Install Trivy
         run: |
           sudo apt-get update
@@ -28,31 +58,54 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
 
+      # -----------------------------
+      # Install Syft
+      # -----------------------------
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
           syft version
+
+      # -----------------------------
+      # Install Cosign
+      # -----------------------------
       - name: Install Cosign
         run: |
-          curl -sSfL https://raw.githubusercontent.com/sigstore/cosign/main/install.sh | sh -s -- -b /usr/local/bin
+          COSIGN_VERSION=$(curl -s https://api.github.com/repos/sigstore/cosign/releases/latest | grep tag_name | cut -d '"' -f4)
+          curl -Lo cosign https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64
+          chmod +x cosign
+          sudo mv cosign /usr/local/bin/
           cosign version
-      - name: Build Docker Image
+
+      # -----------------------------
+      # Build Docker Image
+      # -----------------------------
+      - name: Build Docker Image (BuildKit)
         run: |
           export DOCKER_BUILDKIT=1
           docker build -t devsecops-app:latest ./assignment-44-docker-buildkit-security/app
 
-      - name: Generate SBOM
+      # -----------------------------
+      # Generate SBOM
+      # -----------------------------
+      - name: Generate SBOM (Syft)
         run: |
           syft devsecops-app:latest -o json > sbom.json
 
-      - name: Scan with Trivy
+      # -----------------------------
+      # Scan Image
+      # -----------------------------
+      - name: Scan Image (Trivy)
         run: |
           trivy image --severity CRITICAL,HIGH \
             --format sarif \
             --output trivy-results.sarif \
             devsecops-app:latest || true
 
-      - name: Fail on Critical
+      # -----------------------------
+      # Fail on Critical
+      # -----------------------------
+      - name: Fail on Critical Vulnerabilities
         run: |
           COUNT=$(grep -c '"level":"error"' trivy-results.sarif || true)
           if [ "$COUNT" -gt 0 ]; then
@@ -60,17 +113,26 @@ jobs:
             exit 1
           fi
 
+      # -----------------------------
+      # Upload SARIF
+      # -----------------------------
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
 
-      - name: Sign Image
+      # -----------------------------
+      # Sign Image (Main Only)
+      # -----------------------------
+      - name: Sign Docker Image (Cosign)
         if: github.ref == 'refs/heads/main'
         run: |
           cosign sign --yes devsecops-app:latest
 
-      - name: Upload SBOM
+      # -----------------------------
+      # Upload SBOM
+      # -----------------------------
+      - name: Upload SBOM Artifact
         uses: actions/upload-artifact@v4
         with:
           name: sbom
