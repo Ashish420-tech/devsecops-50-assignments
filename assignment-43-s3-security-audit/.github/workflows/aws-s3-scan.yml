@@ -1,0 +1,88 @@
+name: S3 Bucket Security Audit and Remediation
+
+on:
+  push:
+    branches: [ main, assignment-43-s3-security-audit ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 8 * * 1'   # Weekly scan (Monday)
+
+jobs:
+  security-scan:
+    name: Cloud Security Scan (S3 + Terraform)
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # -----------------------------
+      # Install Python (for Checkov)
+      # -----------------------------
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # -----------------------------
+      # Install Checkov
+      # -----------------------------
+      - name: Install Checkov
+        run: |
+          pip install checkov
+
+      # -----------------------------
+      # Run Security Scan
+      # -----------------------------
+      - name: Run Checkov Scan (Terraform S3)
+        run: |
+          echo "Running S3 Security Scan..."
+          checkov -d terraform/ \
+            --framework terraform \
+            --output sarif \
+            --output-file-path reports/aws-s3-results.sarif \
+            --soft-fail false
+
+      # -----------------------------
+      # Upload SARIF to GitHub Security Tab
+      # -----------------------------
+      - name: Upload SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: reports/aws-s3-results.sarif
+
+      # -----------------------------
+      # Fail pipeline if critical issues found
+      # -----------------------------
+      - name: Enforce Security Gate
+        run: |
+          CRITICAL=$(grep -c '"severity": "CRITICAL"' reports/aws-s3-results.sarif || true)
+          echo "Critical Issues: $CRITICAL"
+
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "❌ Critical vulnerabilities found. Failing pipeline."
+            exit 1
+          else
+            echo "✅ No critical vulnerabilities."
+          fi
+
+      # -----------------------------
+      # PR Comment (Optional)
+      # -----------------------------
+      - name: Comment PR with Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## 🔐 S3 Security Scan Completed\nCheck Security tab for details.'
+            })
