@@ -23,7 +23,18 @@ jobs:
 
       - name: Run kube-hunter scan
         run: |
-          kube-hunter --remote localhost > kube-hunter-results.txt || true
-
+          echo "Running kube-hunter scan..."
+          kube-hunter --remote localhost --report json > kube-hunter-results.json || true
+      - name: Print Findings
+        run: |
+          cat kube-hunter-results.json
       - name: Show Results
         run: cat kube-hunter-results.txt
+      - name: Fail on Critical Issues
+        run: |
+          if grep -i "CRITICAL" kube-hunter-results.json; then
+              echo "❌ Critical vulnerabilities found!"
+              exit 1
+          else
+              echo "✅ No critical vulnerabilities"
+          fi
