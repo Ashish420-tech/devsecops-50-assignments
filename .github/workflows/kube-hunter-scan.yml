@@ -1,0 +1,29 @@
+name: Kubernetes Penetration Testing with kube-hunter
+
+on:
+  push:
+    branches:
+      - main
+      - assignment-45-kubernetes-penetration-testing-kube-hunter
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  kube-hunter-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install kube-hunter
+        run: |
+          pip install kube-hunter
+
+      - name: Run kube-hunter scan
+        run: |
+          kube-hunter --remote localhost > kube-hunter-results.txt || true
+
+      - name: Show Results
+        run: cat kube-hunter-results.txt
