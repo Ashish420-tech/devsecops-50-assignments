@@ -4,6 +4,8 @@ permissions:
   security-events: write
 on:
   push:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - assignment-02-temp
 jobs:

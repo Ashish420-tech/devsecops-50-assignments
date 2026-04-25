@@ -2,8 +2,12 @@ name: Gitleaks Scan
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
+    branches: [main]
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 
 jobs:
   gitleaks:

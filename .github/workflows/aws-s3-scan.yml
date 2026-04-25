@@ -2,10 +2,14 @@ name: S3 Bucket Security Audit and Remediation
 
 on:
   push:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - main
       - assignment-43-s3-security-audit
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - main
   workflow_dispatch:

@@ -6,8 +6,12 @@ permissions:
 
 on:
   push:
-    branches: [ main, assignment-47-opa ]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
+    branches: [main, assignment-47-opa]
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 
 jobs:
   opa-check:
@@ -70,7 +74,7 @@ jobs:
 
       - name: Fail Pipeline if Policy Violated
         run: |
-          if [ "${{ steps.opa.outputs.result }}" = "false" ]; then
+          if ["${{ steps.opa.outputs.result }}" = "false"]; then
             echo "❌ Policy violation detected!"
             exit 1
           fi
