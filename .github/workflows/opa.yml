@@ -1,5 +1,9 @@
 name: OPA Policy Check
 
+permissions:
+  contents: read
+  security-events: write
+
 on:
   push:
     branches: [ main, assignment-47-opa ]
@@ -25,6 +29,7 @@ jobs:
         id: opa
         run: |
           RESULT=$(echo '{"role":"user","method":"POST","path":"/users"}' | opa eval --stdin-input --data assignment-47-opa/policies 'data.authz.allow' | jq -r '.result[0].expressions[0].value')
+          echo "Policy result: $RESULT"
           echo "result=$RESULT" >> $GITHUB_OUTPUT
 
       - name: Generate SARIF Report
@@ -38,20 +43,28 @@ jobs:
                   "informationUri": "https://www.openpolicyagent.org/",
                   "rules": [{
                     "id": "OPA001",
-                    "shortDescription": { "text": "Unauthorized API access" }
+                    "shortDescription": { "text": "Unauthorized API access" },
+                    "fullDescription": { "text": "User attempted unauthorized POST request" },
+                    "help": { "text": "Restrict POST access to admin users only" }
                   }]
                 }
               },
               "results": [{
                 "ruleId": "OPA001",
                 "level": "error",
-                "message": { "text": "Unauthorized POST request detected" }
+                "message": { "text": "Policy violation detected: unauthorized POST request" },
+                "locations": [{
+                  "physicalLocation": {
+                    "artifactLocation": { "uri": "input.json" }
+                  }
+                }]
               }]
             }]
           }' > opa-results.sarif
 
       - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        if: github.event_name != 'pull_request'
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: opa-results.sarif
 
