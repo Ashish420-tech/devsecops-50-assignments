@@ -121,3 +121,4 @@ charts/
 # =========================
 *.token
 gh_token
+*:Zone.Identifier
