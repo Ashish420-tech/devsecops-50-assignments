@@ -2,7 +2,7 @@ name: OPA Policy Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, assignment-47-opa ]
   pull_request:
 
 jobs:
@@ -13,11 +13,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install OPA
+      - name: Install OPA and jq
         run: |
           wget https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
           chmod +x opa_linux_amd64_static
           sudo mv opa_linux_amd64_static /usr/local/bin/opa
+          sudo apt-get update
+          sudo apt-get install -y jq
 
       - name: Run OPA Policy Check (PASS case)
         run: |
@@ -25,7 +27,7 @@ jobs:
 
       - name: Run OPA Policy Check (FAIL if violation)
         run: |
-          RESULT=$(echo '{"role":"user","method":"POST","path":"/users"}' | opa eval --stdin-input --data policies 'data.authz.allow' | jq -r '.result[0].expressions[0].value')
+          RESULT=$(echo '{"role":"user","method":"POST","path":"/users"}' | opa eval --stdin-input --data assignment-47-opa/policies 'data.authz.allow' | jq -r '.result[0].expressions[0].value')
 
           echo "Policy result: $RESULT"
 
