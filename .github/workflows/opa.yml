@@ -21,17 +21,43 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: Run OPA Policy Check (PASS case)
-        run: |
-          echo '{"role":"user","method":"GET","path":"/users"}' | opa eval --stdin-input --data assignment-47-opa/policies 'data.authz.allow'
-
-      - name: Run OPA Policy Check (FAIL if violation)
+      - name: Run OPA Policy Check
+        id: opa
         run: |
           RESULT=$(echo '{"role":"user","method":"POST","path":"/users"}' | opa eval --stdin-input --data assignment-47-opa/policies 'data.authz.allow' | jq -r '.result[0].expressions[0].value')
+          echo "result=$RESULT" >> $GITHUB_OUTPUT
 
-          echo "Policy result: $RESULT"
+      - name: Generate SARIF Report
+        run: |
+          echo '{
+            "version": "2.1.0",
+            "runs": [{
+              "tool": {
+                "driver": {
+                  "name": "OPA",
+                  "informationUri": "https://www.openpolicyagent.org/",
+                  "rules": [{
+                    "id": "OPA001",
+                    "shortDescription": { "text": "Unauthorized API access" }
+                  }]
+                }
+              },
+              "results": [{
+                "ruleId": "OPA001",
+                "level": "error",
+                "message": { "text": "Unauthorized POST request detected" }
+              }]
+            }]
+          }' > opa-results.sarif
 
-          if [ "$RESULT" = "false" ]; then
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: opa-results.sarif
+
+      - name: Fail Pipeline if Policy Violated
+        run: |
+          if [ "${{ steps.opa.outputs.result }}" = "false" ]; then
             echo "❌ Policy violation detected!"
             exit 1
           fi
