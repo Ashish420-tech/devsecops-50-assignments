@@ -2,17 +2,14 @@ name: Kubernetes Penetration Testing with kube-hunter
 
 on:
   push:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - main
-      - assignment-45-kubernetes-penetration-testing-kube-hunter
-  pull_request:
-    paths:
-      - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - main
 
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   kube-hunter-scan:
     name: Run kube-hunter Security Scan

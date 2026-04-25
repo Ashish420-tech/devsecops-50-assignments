@@ -2,11 +2,14 @@ name: DORA Metrics Pipeline
 
 on:
   push:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
-    branches: [assignment-39-dora-metrics, main]
-  workflow_dispatch:
 
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   build-deploy:
     runs-on: ubuntu-latest

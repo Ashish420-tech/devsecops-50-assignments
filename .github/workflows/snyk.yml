@@ -2,15 +2,14 @@ name: Snyk Security Scan
 
 on:
   push:
-    paths:
-      - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - main
-      - assignment-36-snyk-security
-  pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
 
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   security-scan:
     runs-on: ubuntu-latest
