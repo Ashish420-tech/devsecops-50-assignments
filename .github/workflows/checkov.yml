@@ -2,9 +2,13 @@ name: Checkov IaC Scan
 
 on:
   push:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - assignment-03
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 
 jobs:
   checkov-scan:

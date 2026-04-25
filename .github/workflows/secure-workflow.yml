@@ -2,9 +2,13 @@ name: Secure CI Pipeline
 
 on:
   push:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - assignment-11-cicd-security
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - assignment-11-cicd-security
 

@@ -2,7 +2,9 @@ name: DORA Metrics Pipeline
 
 on:
   push:
-    branches: [ assignment-39-dora-metrics, main ]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
+    branches: [assignment-39-dora-metrics, main]
   workflow_dispatch:
 
 jobs:
@@ -93,7 +95,7 @@ jobs:
         env:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
         run: |
-          if [ -f dora_event.json ]; then
+          if [-f dora_event.json]; then
             curl -X POST "https://api.datadoghq.com/api/v1/events" \
               -H "Content-type: application/json" \
               -H "DD-API-KEY: $DD_API_KEY" \

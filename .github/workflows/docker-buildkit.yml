@@ -2,10 +2,14 @@ name: DevSecOps Pipeline (OPA + BuildKit + SBOM + Scan + Sign)
 
 on:
   push:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - main
       - assignment-44-docker-buildkit-security
   pull_request:
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
       - main
 
@@ -108,7 +112,7 @@ jobs:
       - name: Fail on Critical Vulnerabilities
         run: |
           COUNT=$(grep -c '"level":"error"' trivy-results.sarif || true)
-          if [ "$COUNT" -gt 0 ]; then
+          if ["$COUNT" -gt 0]; then
             echo "❌ Critical vulnerabilities found"
             exit 1
           fi
