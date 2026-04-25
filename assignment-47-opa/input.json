@@ -1,0 +1,5 @@
+{
+  "role": "admin",
+  "method": "POST",
+  "path": "/users"
+}
