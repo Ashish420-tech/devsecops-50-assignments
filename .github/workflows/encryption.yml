@@ -2,14 +2,14 @@ name: Encryption Security Check
 
 on:
   push:
-    paths:
-      - "assignment-48-devsecops-vuln-mgmt/**"
-    branches: [main]
-  pull_request:
     branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
 
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   security:
     runs-on: ubuntu-latest

@@ -2,18 +2,14 @@ name: DevSecOps Pipeline (OPA + BuildKit + SBOM + Scan + Sign)
 
 on:
   push:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - main
-      - assignment-44-docker-buildkit-security
+
   pull_request:
     branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - main
-
 jobs:
   security:
     runs-on: ubuntu-latest

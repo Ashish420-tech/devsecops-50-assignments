@@ -4,10 +4,14 @@ permissions:
   security-events: write
 on:
   push:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
-    branches:
-      - assignment-02-temp
+
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest

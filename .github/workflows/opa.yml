@@ -6,14 +6,14 @@ permissions:
 
 on:
   push:
-    paths:
-      - "assignment-48-devsecops-vuln-mgmt/**"
-    branches: [main, assignment-47-opa]
-  pull_request:
     branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
 
+  pull_request:
+    branches: [main]
+    paths:
+      - "assignment-48-devsecops-vuln-mgmt/**"
 jobs:
   opa-check:
     runs-on: ubuntu-latest
