@@ -21,7 +21,7 @@ jobs:
 
       - name: Run OPA Policy Check (PASS case)
         run: |
-          echo '{"role":"user","method":"GET","path":"/users"}' | opa eval --stdin-input --data policies 'data.authz.allow'
+          echo '{"role":"user","method":"GET","path":"/users"}' | opa eval --stdin-input --data assignment-47-opa/policies 'data.authz.allow'
 
       - name: Run OPA Policy Check (FAIL if violation)
         run: |
