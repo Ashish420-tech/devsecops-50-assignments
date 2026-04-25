@@ -8,6 +8,7 @@ on:
       - main
       - assignment-43-s3-security-audit
   pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
     branches:

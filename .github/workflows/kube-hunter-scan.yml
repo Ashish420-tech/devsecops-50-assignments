@@ -8,6 +8,7 @@ on:
       - main
       - assignment-45-kubernetes-penetration-testing-kube-hunter
   pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
     branches:

@@ -6,6 +6,7 @@ on:
       - "assignment-48-devsecops-vuln-mgmt/**"
     branches: [main]
   pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
 

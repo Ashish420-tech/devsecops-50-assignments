@@ -8,6 +8,7 @@ on:
       - main
       - assignment-36-snyk-security
   pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
 

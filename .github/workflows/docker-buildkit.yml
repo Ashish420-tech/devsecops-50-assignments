@@ -8,6 +8,7 @@ on:
       - main
       - assignment-44-docker-buildkit-security
   pull_request:
+    branches: [main]
     paths:
       - "assignment-48-devsecops-vuln-mgmt/**"
     branches:
