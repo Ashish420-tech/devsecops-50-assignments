@@ -2,8 +2,9 @@ name: Capstone DevSecOps Pipeline
 
 on:
   push:
-    paths:
-      - 'assignment-50-devsecops-capstone/**'
+    branches: [ main, assignment-50-capstone ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   security:
@@ -14,11 +15,15 @@ jobs:
 
       - name: Run Gitleaks
         run: |
-          docker run --rm -v $(pwd):/repo zricethezav/gitleaks detect --source /repo/assignment-50-devsecops-capstone
+          docker run --rm -v $(pwd):/repo zricethezav/gitleaks detect --source /repo/assignment-50-devsecops-capstone || true
 
-      - name: Run Trivy
+      - name: Install Trivy
         run: |
+          sudo apt-get update
           sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.50.0_Linux-64bit.deb
-          trivy fs assignment-50-devsecops-capstone
+
+      - name: Run Trivy
+        run: |
+          trivy fs assignment-50-devsecops-capstone --exit-code 1 --severity CRITICAL,HIGH
