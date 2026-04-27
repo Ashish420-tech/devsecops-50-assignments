@@ -1,0 +1,31 @@
+name: Vault Secrets Integration
+
+on:
+push:
+branches:
+- assignment-05
+
+jobs:
+vault-demo:
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Code
+    uses: actions/checkout@v3
+
+  - name: Install Vault CLI
+    run: |
+      sudo apt update
+      sudo apt install -y unzip
+      wget https://releases.hashicorp.com/vault/1.15.0/vault_1.15.0_linux_amd64.zip
+      unzip vault_1.15.0_linux_amd64.zip
+      sudo mv vault /usr/local/bin/
+
+  - name: Fetch Secrets from Vault
+    env:
+      VAULT_ADDR: http://host.docker.internal:8200
+      VAULT_TOKEN: root
+    run: |
+      vault kv get secret/database
+```
