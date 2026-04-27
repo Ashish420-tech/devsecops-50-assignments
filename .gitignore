@@ -1,4 +1,50 @@
+# Node
 node_modules/
+npm-debug.log
+
+# Env files
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Python
+venv/
+.venv/
+__pycache__/
+
+# Build / binaries
+*.zip
+*.tar
+*.gz
+*.bin
+
+# Vault / secrets
+vault_*.zip
+*.pem
+*.key
+
+# Kubernetes (optional temp files)
+*.bak
+
+# IDE
+.vscode/
+.idea/
+
+# ArgoCD (DO NOT ignore k8s manifests!)
+# ❌ DO NOT ignore k8s/ folder
+# Only ignore temp files if anynode_modules/
 .env
 *.zip
 *.tar
@@ -6,3 +52,6 @@ node_modules/
 .terraform/
 venv/
 .venv/
+# ArgoCD CLI binary
+argocd
+assignment-50-devsecops-capstone/argocd
