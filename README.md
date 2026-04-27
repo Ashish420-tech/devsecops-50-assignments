@@ -352,8 +352,99 @@ devsecops-50-assignments/
 ├── reports/                        # Auto-generated scan reports
 └── README.md
 ```
-
+                         ┌───────────────────────────────┐
+                         │        Developer (You)         │
+                         │   Code → Git Push (Branch)     │
+                         └──────────────┬────────────────┘
+                                        │
+                                        ▼
+                         ┌───────────────────────────────┐
+                         │        GitHub Repository       │
+                         │ devsecops-50-assignments      │
+                         │ (Assignment Branches)          │
+                         └──────────────┬────────────────┘
+                                        │
+                                        ▼
+                         ┌───────────────────────────────┐
+                         │     GitHub Actions CI/CD       │
+                         │                               │
+                         │  🔍 Gitleaks (Secrets Scan)    │
+                         │  🧪 SAST (CodeQL / SonarQube)  │
+                         │  📦 Trivy (Image Scan)         │
+                         │  🏗️ Checkov (IaC Scan)         │
+                         │  🧾 SBOM (Syft)               │
+                         │  🔐 Cosign (Image Signing)     │
+                         └──────────────┬────────────────┘
+                                        │
+                                        ▼
+                         ┌───────────────────────────────┐
+                         │      Container Registry        │
+                         │   (Docker / Minikube Image)    │
+                         └──────────────┬────────────────┘
+                                        │
+                                        ▼
+                ┌──────────────────────────────────────────────┐
+                │                ArgoCD (GitOps)               │
+                │                                              │
+                │  Watches Git Repo (k8s manifests)            │
+                │  Detects changes                             │
+                │  Auto Sync enabled                           │
+                │                                              │
+                └──────────────┬───────────────────────────────┘
+                               │
+                               ▼
+                ┌──────────────────────────────────────────────┐
+                │              Kubernetes Cluster               │
+                │                  (Minikube)                   │
+                │                                              │
+                │  ┌────────────────────────────────────────┐  │
+                │  │ Deployment: capstone-app               │  │
+                │  │ Service: capstone-service              │  │
+                │  └────────────────────────────────────────┘  │
+                │                                              │
+                │  🔐 Secrets → Vault / Kubernetes Secrets     │
+                │  🔍 Runtime Security → Falco                 │
+                │  📊 Monitoring → Prometheus / Grafana        │
+                │                                              │
+                └──────────────┬───────────────────────────────┘
+                               │
+                               ▼
+                       ┌────────────────────┐
+                       │   End User (UI)    │
+                       │  Browser Access    │
+                       │  localhost:NodePort│
+                       └────────────────────┘
 ---
+
+### 🔍 Architecture Flow Explained
+
+1. **Developer pushes code** to GitHub (feature branch or capstone branch)
+2. **CI/CD pipeline triggers**:
+   - Secrets scanning (Gitleaks)
+   - SAST (CodeQL / SonarQube)
+   - Container scanning (Trivy)
+   - IaC scanning (Checkov)
+   - SBOM generation (Syft)
+   - Image signing (Cosign)
+
+3. **Secure image is built** and stored in registry
+
+4. **ArgoCD (GitOps controller)**:
+   - Monitors Git repository
+   - Detects changes in `k8s/` manifests
+   - Automatically syncs with cluster
+
+5. **Kubernetes deploys application**
+   - Deployment + Service created
+   - Secure runtime policies applied
+
+6. **Application becomes accessible**
+   - Exposed via NodePort / Minikube service
+
+7. **Security + Observability**
+   - Falco → runtime threat detection
+   - Prometheus/Grafana → monitoring
+   - Vault → secret management
 
 ## ⚙️ CI/CD Security Gates — Every Stage is Mandatory
 
